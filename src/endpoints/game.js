@@ -27,7 +27,8 @@ GameRouter.get('/games/:id', async (req, res) => {
 
 GameRouter.post('/games', async (req, res) => {
     const game = req.body;
-    console.log('GAME', game);
+    game.created_date = new Date();
+    game.updated_date = new Date();
     game.user = '6715f95fb48fee022003f06a';
     const resp = await DB.collection('games').insertOne(game);
     game._id = resp.insertedId.toString();

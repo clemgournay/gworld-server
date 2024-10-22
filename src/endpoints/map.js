@@ -7,15 +7,19 @@ import { DB } from '../database.js';
 export const MapRouter = express.Router();
 
 MapRouter.get('/maps', async (req, res) => {
-    const maps = await DB.collection('maps').find().toArray();
+    const query = {};
+    console.log('QUERY', req.query)
+    if (req.query.game) {
+        query.game = req.query.game;
+    }
+    const maps = await DB.collection('maps').find(query).toArray();
     res.json({data: maps, count: maps.length});
 });
 
 MapRouter.get('/maps/:id', async (req, res) => {
     const id = req.params.id;
-    console.log(id);
+    console.log('MAP ID', id);
     const map = await DB.collection('maps').findOne({_id: ObjectId.createFromHexString(id)});
-    console.log(map)
     res.json({data: map});
 });
 
@@ -37,6 +41,8 @@ MapRouter.post('/maps', async (req, res) => {
     const layers = JSON.stringify(map.layers);
     delete map._id;
     delete map.layers;
+    delete map.screenWidth;
+    delete map.screenHeight;
     const resp = await DB.collection('maps').insertOne(map);
     map._id = resp.insertedId.toString();
     const dir = `data/maps/${map._id}`;
@@ -51,6 +57,8 @@ MapRouter.post('/maps/:id/copy', async (req, res) => {
     console.log(id);
     const map = await DB.collection('maps').findOne({_id:  ObjectId.createFromHexString(id)});
     delete map._id;
+    delete map.screenWidth;
+    delete map.screenHeight;
     map.created_date = new Date();
     map.updated_date = new Date();
     map.name = map.name + ' copy';
