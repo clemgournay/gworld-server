@@ -39,6 +39,8 @@ GameRouter.put('/games/:id', async (req, res) => {
 
 });
 
-GameRouter.delete('/games', async (req, res) => {
-
+GameRouter.delete('/games/:id', async (req, res) => {
+    const  id = req.params.id;
+    await DB.collection('games').deleteOne({_id: ObjectId.createFromHexString(id)});
+    res.json({message: 'ok'});
 });
