@@ -39,10 +39,6 @@ MapRouter.post('/maps', async (req, res) => {
     map.created_date = new Date();
     map.updated_date = new Date();
     const layers = JSON.stringify(map.layers);
-    delete map._id;
-    delete map.layers;
-    delete map.screenWidth;
-    delete map.screenHeight;
     const resp = await DB.collection('maps').insertOne(map);
     map._id = resp.insertedId.toString();
     const dir = `data/maps/${map._id}`;
@@ -56,9 +52,6 @@ MapRouter.post('/maps/:id/copy', async (req, res) => {
     const id = req.params.id;
     console.log(id);
     const map = await DB.collection('maps').findOne({_id:  ObjectId.createFromHexString(id)});
-    delete map._id;
-    delete map.screenWidth;
-    delete map.screenHeight;
     map.created_date = new Date();
     map.updated_date = new Date();
     map.name = map.name + ' copy';
@@ -84,19 +77,19 @@ MapRouter.post('/maps/:id/copy', async (req, res) => {
 
 MapRouter.put('/maps/:id', async (req, res) => {
     const id = req.params.id;
-    const updateData = req.body;
-    updateData.updated_date = new Date();
-    delete updateData._id;
+    const map = req.body;
+    map.updated_date = new Date();
+    delete map._id;
 
-    console.log(updateData.layers);
-    if ('layers' in updateData) { 
-        const layers = JSON.stringify(updateData.layers);
-        delete updateData.layers;
+    console.log(map.layers);
+    if ('layers' in map) { 
+        const layers = JSON.stringify(map.layers);
+        delete map.layers;
         const dir = `data/maps/${id}`;
         fs.writeFileSync(`${dir}/layers.json`, layers);
     }
 
-    await DB.collection('maps').updateOne({_id: ObjectId.createFromHexString(id)}, {$set: updateData});
+    await DB.collection('maps').updateOne({_id: ObjectId.createFromHexString(id)}, {$set: map});
     res.json({message: 'ok'});
 
 });

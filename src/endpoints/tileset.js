@@ -5,31 +5,14 @@ import fs from 'fs';
 
 import { DB } from '../database.js';
 import { ObjectId } from 'mongodb';
-import { config } from 'process';
 
-/*
-const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-      cb(null, 'media/')
-    },
-    filename: (req, file, cb) => {
-        const id = v4();
-        const parts = file.originalname.split('.');
-        const ext = parts[parts.length - 1];
-        const filename = `${id}.${ext}`;
-        cb(null, filename);
-    }
-  })
-const upload = multer({storage})*/
+
 const upload = multer({dest: ('./media')});
 
 export const TilesetRouter = express.Router();
 
 TilesetRouter.get('/tilesets', async (req, res) => {
     const tilesets = await DB.collection('tilesets').find().toArray();
-    for (let tileset of tilesets) {
-        tileset.src = `${process.env.API_URL}/media/${tileset.image}`;
-    }
     res.json({'data': tilesets, 'count': tilesets.length});
 });
 
@@ -42,7 +25,6 @@ TilesetRouter.post('/tilesets/upload', upload.single('tileset'), (req, res) => {
 
 TilesetRouter.post('/tilesets', async (req, res) => {
     const tileset = req.body;
-    delete tileset._id;
     console.log(tileset);
     tileset.created_date = new Date();
     tileset.update_date = new Date();
