@@ -4,6 +4,7 @@ import cors from 'cors';
 import { MapRouter } from './src/endpoints/map.js';
 import { GameRouter } from './src/endpoints/game.js';
 import { TilesetRouter } from './src/endpoints/tileset.js';
+import { AudioRouter } from './src/endpoints/audio.js';
 import { MediaRouter } from './src/endpoints/media.js';
 
 const app = express();
@@ -21,6 +22,7 @@ app.use(cors(corsOptions));
 app.use(GameRouter);
 app.use(MapRouter);
 app.use(TilesetRouter);
+app.use(AudioRouter);
 app.use(MediaRouter);
 
 app.listen(port, () => {
