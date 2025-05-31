@@ -1,7 +1,7 @@
 {
   "type": "module",
   "scripts": {
-    "start": "nodemon --env-file=.env  main.js",
+    "dev": "nodemon --env-file=.env  main.js",
     "prod": "node main.js"
   },
   "dependencies": {
